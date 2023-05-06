@@ -65,7 +65,7 @@ tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf { candidate.version.isNonStable() && !currentVersion.isNonStable() }
 }
 
-ktfmt { kotlinLangStyle() }
+configure<com.ncorti.ktfmt.gradle.KtfmtExtension> { kotlinLangStyle() }
 
 val fmtBuildScriptsTask =
     tasks.register<KtfmtFormatTask>("ktfmtFormatBuildScripts") {
@@ -83,8 +83,7 @@ subprojects {
     // Replace dependencies on DesignCompose with our project
     configurations.all {
         resolutionStrategy.dependencySubstitution {
-            substitute(module("com.android.designcompose:designcompose"))
-                .using(project(":designcompose"))
+            substitute(module("com.android.designcompose:designcompose")).using(project(":designcompose"))
             substitute(module("com.android.designcompose:codegen")).using(project(":codegen"))
         }
     }
