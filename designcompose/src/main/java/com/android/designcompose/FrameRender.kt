@@ -370,12 +370,38 @@ internal fun ContentDrawScope.render(
                                 progressBarData.discrete,
                                 progressBarData.discreteValue
                             )
-                        if (progressBarData.vertical) {
-                            frameSize = Size(size.width, progress)
-                            val topOffset = style.top.pointsAsDp().value
-                            overrideTransform = androidx.compose.ui.graphics.Matrix()
-                            overrideTransform.translate(0F, -topOffset + end - progress)
-                        } else frameSize = Size(progress, size.height)
+                        if (progressBarData.moveOnly) {
+                            if (progressBarData.vertical) {
+                                overrideTransform =
+                                    style.transform.asComposeTransform(density)
+                                        ?: androidx.compose.ui.graphics.Matrix()
+                                val decomposed = style.transform.decompose(density)
+                                val topOffset = end + start - style.top.pointsAsDp().value
+                                overrideTransform.translate(
+                                    0F,
+                                    topOffset - progress + decomposed.translateY
+                                )
+                            } else {
+                                overrideTransform =
+                                    style.transform.asComposeTransform(density)
+                                        ?: androidx.compose.ui.graphics.Matrix()
+                                val decomposed = style.transform.decompose(density)
+                                val leftOffset = style.left.pointsAsDp().value
+                                overrideTransform.translate(
+                                    progress - leftOffset - decomposed.translateX,
+                                    0F
+                                )
+                            }
+                        } else {
+                            if (progressBarData.vertical) {
+                                frameSize = Size(size.width, progress)
+                                val topOffset = style.top.pointsAsDp().value
+                                overrideTransform = androidx.compose.ui.graphics.Matrix()
+                                overrideTransform.translate(0F, -topOffset + end + start - progress)
+                            } else {
+                                frameSize = Size(progress, size.height)
+                            }
+                        }
                         customProgressBar = true
                     }
                 }

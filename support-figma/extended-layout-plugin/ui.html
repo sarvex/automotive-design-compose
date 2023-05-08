@@ -156,6 +156,12 @@
           <label for="barVerticalSwitch" class="switch__label" style="font-weight:normal">Vertical</label>
         </div>
       </div>
+      <div style="display: flex">
+        <div class="switch">
+          <input id="barMoveOnlySwitch" type="checkbox" class="switch__toggle">
+          <label for="barMoveOnlySwitch" class="switch__label" style="font-weight:normal">Move Only (Scrubber)</label>
+        </div>
+      </div>
       <div class="slidecontainer">
         <input id="barValue" type="range" min="0" max="100" class="slider" id="myRange" oninput="barChanged();">
       </div>
@@ -308,6 +314,7 @@
         discrete: barDiscreteSwitch.checked,
         discreteValue: toNumber(barDiscreteValue.value, 1),
         vertical: barVerticalSwitch.checked,
+        moveOnly: barMoveOnlySwitch.checked,
       }}, '*');
   }
 
@@ -364,6 +371,7 @@
     barDiscreteValue.value = bd ? bd.discreteValue : 1;
     barDiscreteValue.disabled = !bd || !bd.discrete;
     barVerticalSwitch.checked = bd && bd.vertical;
+    barMoveOnlySwitch.checked = bd && bd.moveOnly;
 
     updateMeterDisabledStates();
   }

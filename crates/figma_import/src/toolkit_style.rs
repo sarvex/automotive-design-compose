@@ -462,6 +462,7 @@ pub struct ProgressBarMeterData {
     pub discrete: bool,
     pub discrete_value: f32,
     pub vertical: bool,
+    pub move_only: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

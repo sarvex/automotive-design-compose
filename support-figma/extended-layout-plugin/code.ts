@@ -741,10 +741,19 @@ else if (figma.command === "move-plugin-data") {
     rotation = (node as FrameNode).rotation;
 
     if (node.type == "FRAME" || node.type == "RECTANGLE") {
-      if (meterData && meterData.progressBarData && meterData.progressBarData.vertical)
-        progress = node.height;
-      else
-        progress = node.width;
+      if (meterData && meterData.progressBarData) {
+        if (meterData.progressBarData.moveOnly) {
+          if (meterData.progressBarData.vertical)
+            progress = meterData.progressBarData.end - node.y;
+          else
+            progress = node.x;
+        } else {
+          if (meterData.progressBarData.vertical)
+            progress = node.height;
+          else
+            progress = node.width;
+        }
+      } 
     }
 
     // If we just selected a node with arc data, save the corner radius if it has changed
@@ -880,12 +889,20 @@ else if (figma.command === "move-plugin-data") {
       value = clamp(value - (value % msg.discreteValue), 0.01, msg.end);
 
     let node = figma.currentPage.selection[0] as FrameNode;
-    if (msg.vertical) {
-      node.resize(node.width, value);
-      node.y = msg.end - value;
+    if (msg.moveOnly) {
+      if (msg.vertical)
+        node.y = end + start - value;
+      else
+        node.x = value;
     }
     else {
-      node.resize(value, node.height);
+      if (msg.vertical) {
+        node.resize(node.width, value);
+        node.y = end + start - value;
+      }
+      else {
+        node.resize(value, node.height);
+      }
     }
 
     let progressBarData = {
@@ -895,6 +912,7 @@ else if (figma.command === "move-plugin-data") {
       discrete: msg.discrete,
       discreteValue: msg.discreteValue,
       vertical: msg.vertical,
+      moveOnly: msg.moveOnly,
     }
 
     let meterData: any = {};
